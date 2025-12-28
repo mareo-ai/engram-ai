@@ -13,6 +13,12 @@ Engram is a small, open-source memory layer for AI agents. It turns conversation
 **Engram is not:** a vector database, a prompt template engine, or an agent framework.
 
 ## Install
+**npm**
+```bash
+npm i --save engram
+```
+
+**bun**
 ```bash
 bun add engram
 ```
@@ -22,8 +28,9 @@ bun add engram
 import { extractMemories } from "@/index";
 
 const messages = [
-  { role: "user", message: "Hi, my name is Zhe" },
+  { role: "user", message: "Hi, my name is Steve" },
   { role: "assistant", message: "Nice to meet you" },
+  { role: "user", message: "I prefer TypeScript" },
 ];
 
 const memories = await extractMemories(messages, {
