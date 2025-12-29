@@ -7,13 +7,22 @@ import type { MemoryType } from "./memory";
 
 type MessageRole = "user" | "assistant";
 
+/**
+ * Model name string used by the target LLM provider.
+ */
 export type SUPPORT_MODEL = string;
 
+/**
+ * A single conversation turn used for memory extraction.
+ */
 export type ConversationMessage = {
   role: MessageRole;
   message: string;
 };
 
+/**
+ * A candidate memory extracted from a conversation.
+ */
 export type MemoryCandidate = {
   type: MemoryType;
   content: string;
@@ -91,6 +100,9 @@ function stringifyConversation(items: ConversationMessage[]): string {
   return items.map((item) => `${item.role}: ${item.message}`).join("\n");
 }
 
+/**
+ * Options for memory extraction.
+ */
 export type ExtractMemoriesOptions = {
   apiKey: string;
   model?: SUPPORT_MODEL;
@@ -98,6 +110,13 @@ export type ExtractMemoriesOptions = {
   baseUrl?: string;
 };
 
+/**
+ * Extract structured memory candidates from a conversation.
+ *
+ * @param messages - Conversation turns to analyze.
+ * @param options - Provider, model, and API key configuration.
+ * @returns Extracted memory candidates or null on failure.
+ */
 export async function extractMemories(
   messages: ConversationMessage[],
   options: ExtractMemoriesOptions

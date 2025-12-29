@@ -57,6 +57,15 @@ await store.put(userId, merged);
 const stored = await store.get(userId);
 ```
 
+You can tune capacity by type and weight:
+```ts
+const merged = mergeMemories(existing, candidates ?? [], {
+  maxMemories: 200,
+  maxPerType: { profile: 50, project: 50, goal: 40, preference: 40, temp: 20 },
+  typeWeights: { profile: 0.9, project: 0.7, goal: 0.6, preference: 0.5, temp: 0.3 },
+});
+```
+
 To switch providers/models:
 ```ts
 await extractMemories(messages, {

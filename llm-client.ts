@@ -1,10 +1,19 @@
+/**
+ * Supported provider identifiers for the built-in LLM client.
+ */
 export type LLMProvider = "deepseek" | "openai" | "openai-compatible";
 
+/**
+ * A chat message compatible with OpenAI-style chat completions.
+ */
 export type ChatMessage = {
   role: "system" | "user" | "assistant";
   content: string;
 };
 
+/**
+ * Request payload for a chat completion call.
+ */
 export type ChatCompletionRequest = {
   provider: LLMProvider;
   apiKey: string;
@@ -14,6 +23,9 @@ export type ChatCompletionRequest = {
   baseUrl?: string;
 };
 
+/**
+ * Normalized chat completion response.
+ */
 export type ChatCompletionResponse = {
   content: string;
 };
@@ -43,6 +55,12 @@ function buildChatCompletionsUrl(baseUrl: string): string {
   return new URL("chat/completions", normalized).toString();
 }
 
+/**
+ * Execute a chat completion request against the selected provider.
+ *
+ * @param request - Provider, model, auth, and message payload.
+ * @returns Normalized response content or null on failure.
+ */
 export async function createChatCompletion(
   request: ChatCompletionRequest
 ): Promise<ChatCompletionResponse | null> {
