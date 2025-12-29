@@ -1,6 +1,6 @@
-# Engram
+# Engram AI
 
-Engram is a small, open-source memory layer for AI agents. It turns conversations into explicit, structured memories that persist across sessions — without becoming a framework.
+Engram AI is a small, open-source memory layer for AI agents. It turns conversations into explicit, structured memories that persist across sessions — without becoming a framework.
 
 ## Why Engram
 - **Long-term memory, not RAG.** Use Engram to store user preferences, goals, and ongoing projects.
@@ -20,7 +20,7 @@ npm i --save engram
 
 **bun**
 ```bash
-bun add engram
+bun add engram-ai
 ```
 
 ## Quick Start

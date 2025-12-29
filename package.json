@@ -1,7 +1,31 @@
 {
-  "name": "engram",
+  "name": "engram-ai",
+  "version": "0.1.0",
+  "description": "Small, explicit memory layer for AI agents",
   "module": "index.ts",
+  "main": "index.ts",
+  "types": "index.ts",
   "type": "module",
+  "files": [
+    "index.ts",
+    "extractor.ts",
+    "README.md",
+    "LICENSE",
+    "examples"
+  ],
+  "exports": {
+    ".": {
+      "types": "./index.ts",
+      "default": "./index.ts"
+    }
+  },
+  "scripts": {
+    "test": "bun test",
+    "typecheck": "bunx tsc --noEmit"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
