@@ -9,6 +9,7 @@
   "files": [
     "index.ts",
     "extractor.ts",
+    "llm-client.ts",
     "README.md",
     "LICENSE",
     "examples"

@@ -39,6 +39,49 @@ const memories = await extractMemories(messages, {
 console.log(memories);
 ```
 
+To switch providers/models:
+```ts
+await extractMemories(messages, {
+  apiKey: process.env.OPENAI_API_KEY!,
+  provider: "openai",
+  model: "gpt-4o-mini",
+});
+```
+
+Claude example (via an OpenAI-compatible gateway):
+```ts
+await extractMemories(messages, {
+  apiKey: process.env.CLAUDE_API_KEY!,
+  provider: "openai-compatible",
+  model: "claude-3-5-sonnet-20241022",
+  baseUrl: "https://your-claude-gateway/v1",
+});
+```
+
+Qwen (OpenAI-compatible) example:
+```ts
+await extractMemories(messages, {
+  apiKey: process.env.DASHSCOPE_API_KEY!,
+  provider: "openai-compatible",
+  model: "qwen-plus",
+  baseUrl: "https://dashscope.aliyuncs.com/compatible-mode/v1",
+});
+```
+
+You can also use environment defaults:
+```bash
+export ENGRAM_PROVIDER=openai
+export ENGRAM_MODEL=gpt-4o-mini
+export ENGRAM_BASE_URL=https://api.openai.com/v1
+```
+
+Supported providers:
+- `deepseek` (default)
+- `openai`
+- `openai-compatible` (requires `baseUrl`)
+
+Direct Anthropic API is not wired yet; use an OpenAI-compatible gateway if needed.
+
 ## Core Concepts
 ### Memory Candidates
 Engram extracts memories as typed, scored candidates:

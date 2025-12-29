@@ -1,6 +1,12 @@
+import {
+  createChatCompletion,
+  type ChatMessage,
+  type LLMProvider,
+} from "./llm-client";
+
 type MessageRole = "user" | "assistant";
 
-export type SUPPORT_MODEL = "deepseek-chat";
+export type SUPPORT_MODEL = string;
 
 export type ConversationMessage = {
   role: MessageRole;
@@ -16,7 +22,10 @@ export type MemoryCandidate = {
   confidence: number;
 };
 
-const DEFAULT_MODEL = "deepseek-chat";
+const DEFAULT_MODEL =
+  process.env.ENGRAM_MODEL ?? process.env.DEEPSEEK_MODEL ?? "deepseek-chat";
+const DEFAULT_PROVIDER = process.env.ENGRAM_PROVIDER;
+const DEFAULT_BASE_URL = process.env.ENGRAM_BASE_URL;
 
 const PROMPT_TEMPLATE = `
 You are an assistant for extracting conversational memories.  
@@ -45,9 +54,11 @@ function buildPrompt(messages: ConversationMessage[]): string {
 async function analyzeWithLlm(
   prompt: string,
   model: SUPPORT_MODEL,
-  apiKey: string
+  apiKey: string,
+  provider: LLMProvider,
+  baseUrl?: string
 ): Promise<MemoryCandidate[] | null> {
-  const messages = [
+  const messages: ChatMessage[] = [
     {
       role: "system",
       content:
@@ -55,42 +66,24 @@ async function analyzeWithLlm(
     },
     { role: "user", content: prompt },
   ];
-  const response = await fetch("https://api.deepseek.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model,
-      messages,
-      temperature: 0.2,
-    }),
+  const response = await createChatCompletion({
+    provider,
+    apiKey,
+    model,
+    messages,
+    temperature: 0.2,
+    baseUrl,
   });
 
-  if (!response.ok) {
-    console.error(
-      `LLM Response Fail: ${response.status} ${response.statusText}`
-    );
-    const text = await response.text();
-    console.error(text);
-    return null;
-  }
-
-  const data = (await response.json()) as {
-    choices: Array<{ message: { content?: string } }>;
-  };
-  const content = data.choices[0]?.message?.content?.trim();
-  if (!content) {
-    console.error("No content return from LLM");
+  if (!response) {
     return null;
   }
 
   try {
-    const parsed = JSON.parse(content) as MemoryCandidate[] | [];
+    const parsed = JSON.parse(response.content) as MemoryCandidate[] | [];
     return parsed;
   } catch {
-    console.error("Invalid format (Not JSON): ", content);
+    console.error("Invalid format (Not JSON): ", response.content);
     return null;
   }
 }
@@ -102,6 +95,8 @@ function stringifyConversation(items: ConversationMessage[]): string {
 export type ExtractMemoriesOptions = {
   apiKey: string;
   model?: SUPPORT_MODEL;
+  provider?: LLMProvider;
+  baseUrl?: string;
 };
 
 export async function extractMemories(
@@ -109,5 +104,20 @@ export async function extractMemories(
   options: ExtractMemoriesOptions
 ): Promise<MemoryCandidate[] | null> {
   const model = options.model ?? DEFAULT_MODEL;
-  return await analyzeWithLlm(buildPrompt(messages), model, options.apiKey);
+  const provider = options.provider ?? resolveProvider(DEFAULT_PROVIDER);
+  const baseUrl = options.baseUrl ?? DEFAULT_BASE_URL;
+  return await analyzeWithLlm(
+    buildPrompt(messages),
+    model,
+    options.apiKey,
+    provider,
+    baseUrl
+  );
+}
+
+function resolveProvider(value?: string): LLMProvider {
+  if (value === "openai" || value === "openai-compatible") {
+    return value;
+  }
+  return "deepseek";
 }

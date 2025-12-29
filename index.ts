@@ -7,3 +7,11 @@ export {
   type ExtractMemoriesOptions,
   type SUPPORT_MODEL,
 } from "./extractor";
+
+export {
+  createChatCompletion,
+  type ChatCompletionRequest,
+  type ChatCompletionResponse,
+  type ChatMessage,
+  type LLMProvider,
+} from "./llm-client";
